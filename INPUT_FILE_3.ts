@@ -72,15 +72,15 @@ function main(workbook: ExcelScript.Workbook) {
             let concatenadoLojas = valoresLojas.map(valor => valor[0]).join(";");
             colAtual_Instore++
 
-            let destinoConcatenadoLojas = inputFinal.getRange(`J${linhaDestino_Final}`); 
+            let destinoConcatenadoLojas = inputFinal.getRange(`J${linhaDestino_Final+1}`); 
             destinoConcatenadoLojas.setValue(concatenadoLojas)
     
-            let destinoConcatenadoSkus = inputFinal.getRange(`K${linhaDestino_Final}`); 
+            let destinoConcatenadoSkus = inputFinal.getRange(`K${linhaDestino_Final+1}`); 
             destinoConcatenadoSkus.setValue(concatenadoSkus)
             }
         else
             {
-            let rangeSkus = w_online.getCell(1,colAtual_Online).getExtendedRange(ExcelScript.KeyboardDirection.down);
+            let rangeSkus = w_online.getCell(2,colAtual_Online).getExtendedRange(ExcelScript.KeyboardDirection.down);
             let valoresSkus = rangeSkus.getValues();
             let concatenadoSkus = valoresSkus.map(valor => valor[0]).join(";");
             let destinoConcatenadoSkus = inputFinal.getRange(`K${linhaDestino_Final}`); 
