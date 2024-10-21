@@ -1,98 +1,84 @@
 function main(workbook: ExcelScript.Workbook) {
 
-    //########## SCRIPT FINAL! ##########
-    
-	// Acessar a planilha 'INPUT_FINAL'
-    let inputFinal = workbook.getWorksheet("INPUT_FINAL");
-    let linhaDestino = 1;
-	
-    let rangeLimpar = inputFinal.getRange("A2:U40");
-    rangeLimpar.clear(ExcelScript.ClearApplyTo.contents);
 
-	// Acessar as planilhas 'INSTORE' e 'ONLINE'
-    let w_instore = workbook.getWorksheet('INSTORE');
-    let w_online = workbook.getWorksheet('ONLINE');
+    //! --------------INPUT FINAL 21.10.2024
 
-    // pegar a ultima coluna 
-    let ultimaCol_Instore = w_instore.getCell(w_instore.getRange().getRowCount()-1, 0).getRangeEdge(ExcelScript.KeyboardDirection.right).getColumnIndex()
-    let ultimaCol_Online = w_online.getCell(w_online.getRange().getRowCount()-1, 0).getRangeEdge(ExcelScript.KeyboardDirection.right).getColumnIndex()
-    
-    //------------- INPUT INICIAL
-    let inputInicial = workbook.getWorksheet("OVERVIEW");
-
-    // Copia as células de D2:L2 da aba 'input_inicial'
-    let rangeInicial = inputInicial.getRange("D2:K2").getValues();
-    let ultimaLinhaInicial = inputInicial.getCell(inputInicial.getRange().getRowCount()-1, 5).getRangeEdge(ExcelScript.KeyboardDirection.up).getRowIndex()
-
-    
-    //!------------- LOOP tabela
-    for (let linhaAtual = 1; linhaAtual <= ultimaLinhaInicial; linhaAtual++) 
-        {
- 
-            // Copia os dados da linha atual (colunas D a K)
-            let rangeLinha = inputInicial.getRangeByIndexes(linhaAtual, 3, 1, 9); 
-            // Linha -1 (para índice zero) e colunas 3 a 9 (D a K)
-            let valoresLinha = rangeLinha.getValues();
-    
-            // Define o intervalo de destino na aba 'input_final' (na linha atual de destino)
-            let destinoLinha = inputFinal.getRangeByIndexes(linhaDestino , 0, 1, valoresLinha[0].length);
-    
-            // Coloca os valores copiados na aba 'input_final'
-            destinoLinha.setValues(valoresLinha);
-    
-            // Atualiza a linha de destino para a próxima linha
-            linhaDestino++;
-        
-        }
-    
-    //!------------- LOOP INSTORE
-
+    // Acessar as planilhas necessárias
+    const inputFinal = workbook.getWorksheet("INPUT_FINAL");
+    const inputInicial = workbook.getWorksheet("OVERVIEW");
+    const w_instore = workbook.getWorksheet("INSTORE");
+    const w_online = workbook.getWorksheet("ONLINE");
+  
+    // Limpar a área de destino na planilha 'INPUT_FINAL'
+    inputFinal.getRange("A2:K40").clear(ExcelScript.ClearApplyTo.contents);
+  
+    // Obter a última linha da planilha 'OVERVIEW'
+    const ultimaLinhaInicial = inputInicial.getCell(inputInicial.getRange().getRowCount() - 1, 5)
+      .getRangeEdge(ExcelScript.KeyboardDirection.up).getRowIndex();
+  
+    // Variáveis para controle de colunas nas planilhas 'INSTORE' e 'ONLINE'
     let colAtual_Instore = 0;
     let colAtual_Online = 0;
-    let linhaDestino_Final = 1;
-
-    for (let linhaAtual = 1; linhaAtual <= ultimaLinhaInicial; linhaAtual++) 
-    {
-
-        let valorMidia = inputFinal.getCell(linhaDestino_Final,4).getValue()
-
-        console.log(linhaAtual)
-        console.log(ultimaLinhaInicial)
-        console.log(valorMidia)
-
-        if(valorMidia == 'Instore')
-            {
-            let rangeSkus = w_instore.getCell(2,colAtual_Instore).getExtendedRange(ExcelScript.KeyboardDirection.down);
-            let valoresSkus = rangeSkus.getValues();
-            let concatenadoSkus = valoresSkus.map(valor => valor[0]).join(";");
-            colAtual_Instore++
-            
-            let rangeLojas = w_instore.getCell(2,colAtual_Instore).getExtendedRange(ExcelScript.KeyboardDirection.down);
-            let valoresLojas = rangeLojas.getValues();
-            let concatenadoLojas = valoresLojas.map(valor => valor[0]).join(";");
-            colAtual_Instore++
-
-            let destinoConcatenadoLojas = inputFinal.getRange(`J${linhaDestino_Final+1}`); 
-            destinoConcatenadoLojas.setValue(concatenadoLojas)
-    
-            let destinoConcatenadoSkus = inputFinal.getRange(`K${linhaDestino_Final+1}`); 
-            destinoConcatenadoSkus.setValue(concatenadoSkus)
-            }
-        else
-            {
-            let rangeSkus = w_online.getCell(2,colAtual_Online).getExtendedRange(ExcelScript.KeyboardDirection.down);
-            let valoresSkus = rangeSkus.getValues();
-            let concatenadoSkus = valoresSkus.map(valor => valor[0]).join(";");
-            let destinoConcatenadoSkus = inputFinal.getRange(`K${linhaDestino_Final}`); 
-            destinoConcatenadoSkus.setValue(concatenadoSkus)
-
-            colAtual_Online++
-            }   
-                
-
-            linhaDestino_Final++;
+    let linhaDestino = 1;
+  
+    // ultima coluna de ONLINE e INSTORE
+    // let col_final_instore: number = w_instore.getCell(0, 0)
+    //   .getRangeEdge(ExcelScript.KeyboardDirection.right)
+    //   .getColumnIndex();
+  
+    // let col_final_online: number = w_online.getCell(0, 0)
+    //   .getRangeEdge(ExcelScript.KeyboardDirection.right)
+    //   .getColumnIndex();
+  
+    //! Loop através das linhas da planilha 'OVERVIEW'
+    for (let linhaAtual = 1; linhaAtual <= ultimaLinhaInicial; linhaAtual++) {
+  
+      // Copiar os dados da linha atual (colunas D a K)
+      const valoresLinha = inputInicial.getRangeByIndexes(linhaAtual, 3, 1, 9).getValues();
+  
+      // Colocar os valores copiados na planilha 'INPUT_FINAL'
+      inputFinal.getRangeByIndexes(linhaDestino, 0, 1, valoresLinha[0].length).setValues(valoresLinha);
+  
+      // Obter o valor da coluna de mídia na linha atual
+      const valorMidia = inputFinal.getCell(linhaDestino, 4).getValue();
+  
+      // Processar conforme o tipo de mídia (Instore ou Online)
+      if (valorMidia === "Instore") {
+        // Concatenar SKUs e lojas da planilha 'INSTORE'
+        const concatenadoSkus = concatenarValores(w_instore, colAtual_Instore);
+        colAtual_Instore++;
+        const concatenadoLojas = concatenarValores(w_instore, colAtual_Instore);
+        colAtual_Instore++;
+  
+        // Colocar os valores concatenados na planilha 'INPUT_FINAL'
+        inputFinal.getRange(`J${linhaDestino + 1}`).setValue(concatenadoLojas);
+        inputFinal.getRange(`K${linhaDestino + 1}`).setValue(concatenadoSkus);
+      } else {
+        // Concatenar SKUs da planilha 'ONLINE'
+        const concatenadoSkus = concatenarValores(w_online, colAtual_Online);
+        colAtual_Online++;
+        // if (colAtual_Online > col_final_online) { break }
+  
+        // Colocar os SKUs concatenados na planilha 'INPUT_FINAL'
+        inputFinal.getRange(`K${linhaDestino + 1}`).setValue(concatenadoSkus);
+      }
+  
+      // Atualizar a linha de destino
+      linhaDestino++;
     }
-
-    
-}
-
+  }
+  
+  //! Função 
+  function concatenarValores(sheet: ExcelScript.Worksheet, colIndex: number): string {
+    let row_final: number = sheet.getCell(2, colIndex)
+      .getRangeEdge(ExcelScript.KeyboardDirection.down)
+      .getRowIndex();
+  
+    let rangeLojas = sheet.getRangeByIndexes(2, colIndex, row_final - 1, 1);
+  
+    // Se não tiver dados, Raise Error
+    if (rangeLojas.getRowCount() > 100) { throw new Error(`Prencher valores de SKUs ou Lojas, não deixar campanha em branco!`);}
+    let valores = rangeLojas.getValues();
+    return valores.map(valor => valor[0]).join(";");
+  }
+  
