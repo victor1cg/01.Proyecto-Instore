@@ -51,8 +51,8 @@ function main(workbook: ExcelScript.Workbook) {
 }
 
 function concatenarValores(sheet: ExcelScript.Worksheet, colIndex: number): string {
-  const row_value3 = sheet.getCell(4, colIndex).getValues()[0][0] as string;
-  const row_value2 = sheet.getCell(3, colIndex).getValues()[0][0] as string;
+  const row_value3 = sheet.getCell(5, colIndex).getValues()[0][0] as string;
+  const row_value2 = sheet.getCell(4, colIndex).getValues()[0][0] as string;
 
   if (!row_value3 && !row_value2) {
     throw new Error(`Preencher valores de SKUs ou Lojas, não deixar campanha em branco!`);
@@ -63,7 +63,7 @@ function concatenarValores(sheet: ExcelScript.Worksheet, colIndex: number): stri
       .getRangeEdge(ExcelScript.KeyboardDirection.down)
       .getRowIndex();
 
-    const rangeLojas = sheet.getRangeByIndexes(2, colIndex, row_final - 1, 1);
+    const rangeLojas = sheet.getRangeByIndexes(4, colIndex, row_final - 1, 1);
     if (rangeLojas.getRowCount() > 100) {
       throw new Error(`Limite de SKUs/Lojas ultrapassado!`);
     }
