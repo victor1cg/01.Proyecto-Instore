@@ -54,16 +54,19 @@ function concatenarValores(sheet: ExcelScript.Worksheet, colIndex: number): stri
   const row_value3 = sheet.getCell(5, colIndex).getValues()[0][0] as string;
   const row_value2 = sheet.getCell(4, colIndex).getValues()[0][0] as string;
 
+  console.log(row_value3)
+  console.log(row_value2)
   if (!row_value3 && !row_value2) {
     throw new Error(`Preencher valores de SKUs ou Lojas, não deixar campanha em branco!`);
   } else if (!row_value3 && row_value2) {
     return row_value2;
   } else {
-    const row_final = sheet.getCell(2, colIndex)
+    const row_final = sheet.getCell(4, colIndex)
       .getRangeEdge(ExcelScript.KeyboardDirection.down)
       .getRowIndex();
-
-    const rangeLojas = sheet.getRangeByIndexes(4, colIndex, row_final - 1, 1);
+    console.log('row final '+row_final)
+    
+    const rangeLojas = sheet.getRangeByIndexes(4, colIndex, row_final - 3, 1);
     if (rangeLojas.getRowCount() > 100) {
       throw new Error(`Limite de SKUs/Lojas ultrapassado!`);
     }
